@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <activity
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation|density"
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.NoActionBarLaunch"
+            android:launchMode="singleTask"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+
+        <!-- Told about every new text message. SmsReceiver keeps only what looks like a bank payment message
+             and drops the rest on the spot. Only the system may send this broadcast (BROADCAST_SMS). -->
+        <receiver
+            android:name=".SmsReceiver"
+            android:exported="true"
+            android:permission="android.permission.BROADCAST_SMS">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Lets Penny read payment-app notifications (Google Pay, PhonePe and so on) once you give it "notification access"
+             and switch the feature on. UpiNotificationListener keeps only those apps and drops the rest unread. -->
+        <service
+            android:name=".UpiNotificationListener"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <!-- Receives the text you type into the quick-add notification. Only Penny's own notification can reach it. -->
+        <receiver
+            android:name=".QuickAddReceiver"
+            android:exported="false" />
+
+        <!-- After a restart or an update, puts the quick-add notification back if it is switched on. -->
+        <receiver
+            android:name=".QuickAddBootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- The home-screen widget. Android asks it to refresh every 30 minutes at most, which also covers midnight. -->
+        <receiver
+            android:name=".TodayWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_today_info" />
+        </receiver>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"></meta-data>
+        </provider>
+    </application>
+
+    <!-- Lets Penny see that the phone has a speech recogniser (for "say what you spent"). -->
+    <queries>
+        <intent>
+            <action android:name="android.speech.action.RECOGNIZE_SPEECH" />
+        </intent>
+    </queries>
+
+    <!-- Penny still has NO internet permission, so it cannot send anything anywhere. -->
+    <!-- Be told about new text messages (bank payments are picked out; everything else is ignored). -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <!-- Only used when you tap "Scan this month's messages": reads the inbox once, in memory, and keeps only bank payments. -->
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <!-- Tell you when a payment is waiting for review. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Brings the quick-add notification back after the phone restarts. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Lets Penny show Android's fingerprint prompt for the app lock. Penny never sees the fingerprint, only yes or no. -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+</manifest>

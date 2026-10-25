@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: pocket-expense-tracker
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app

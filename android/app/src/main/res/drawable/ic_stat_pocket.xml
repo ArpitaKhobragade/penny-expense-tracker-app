@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Small notification icon: a coin with a P cut out of it. Android draws notification icons in one colour. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M12,2a10,10 0 1,0 0.001,0zM9,6v12h2v-4h2.5a4,4 0 0 0 0,-8H9zM11,8h2.5a2,2 0 0 1 0,4H11V8z" />
+</vector>

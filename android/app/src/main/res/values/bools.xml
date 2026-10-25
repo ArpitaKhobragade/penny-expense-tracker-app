@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- True only in the lite edition (see src/lite). The web app hides what needs text-message and notification access. -->
+    <bool name="penny_lite">false</bool>
+</resources>

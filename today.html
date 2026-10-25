@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>Penny</title>
+  <script>try{var s=JSON.parse(localStorage.getItem("pocket-expense-tracker-settings-v1")||"{}"),r=document.documentElement;if(s.theme==="light"||s.theme==="dark")r.setAttribute("data-theme",s.theme);var l=JSON.parse(localStorage.getItem("pocket-expense-tracker-lock-v1")||"{}");if(l.method!=="none")r.setAttribute("data-locked","")}catch(e){r.setAttribute("data-locked","")}</script>
+  <link rel="stylesheet" href="today.css" />
+</head>
+<body>
+<div class="lock-screen" id="lock-screen" role="dialog" aria-modal="true" aria-label="Penny lock">
+  <div class="lock-card" id="lock-body"></div>
+</div>
+<div class="app">
+  <header class="app-header">
+    <a class="brand" href="#today" aria-label="Penny, back to Home"><svg class="brand-logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" class="logo-bg"/><circle cx="16" cy="16" r="10.5" class="logo-coin"/><path d="M13.2 22.5V10h4.1a3.4 3.4 0 0 1 0 6.8h-4.1" class="logo-p"/></svg><span>Penny</span></a>
+    <div class="header-actions">
+    <button class="user-btn" id="theme-btn" type="button" aria-label="Switch to dark mode">
+      <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+      <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- TODAY -->
+    <section class="view" id="view-today" aria-labelledby="h-today">
+      <h1 class="sr-only" id="h-today" tabindex="-1">Home</h1>
+
+      <div class="seg" role="tablist" aria-label="Plan">
+        <button type="button" role="tab" id="mode-month" aria-selected="true">Monthly</button>
+        <button type="button" role="tab" id="mode-period" aria-selected="false">Specific period</button>
+      </div>
+
+      <div class="stack" id="month-panel">
+        <article class="hero" id="hero" aria-live="polite">
+          <p class="hero-label" id="hero-label">You can spend today</p>
+          <p class="hero-amount" id="hero-amount">₹0</p>
+          <div class="hero-bar" role="presentation"><div class="hero-bar-fill" id="hero-bar-fill"></div></div>
+          <div class="stat-row" id="stats-month" aria-label="This month">
+              <div class="stat"><span id="stat-left-label">Left this month</span><strong id="stat-left">₹0</strong></div>
+              <div class="stat"><span id="stat-spent-label">Spent this month</span><strong id="stat-spent">₹0</strong></div>
+              <button class="stat stat-tap" id="stat-goals-btn" type="button" aria-label="Set money aside for a goal"><span>Set aside +</span><strong id="stat-goals">₹0</strong></button>
+          </div>
+          <p class="hero-sub" id="hero-sub"></p>
+          <p class="hero-foot" id="hero-foot"></p>
+          <button class="hero-action hidden" id="hero-set-budget" type="button">Set monthly budget</button>
+        </article>
+
+        <div class="action-row" id="action-row">
+          <button class="act" id="afford-open" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.6 2.2c-.7.4-1.1.9-1.1 1.8M12 17h.01"/></svg><span>Can I afford this?</span></button>
+          <button class="act two-line hidden" id="budget-open" type="button"><span id="budget-open-title">Monthly budget</span><strong id="budget-open-value"></strong></button>
+        </div>
+
+        <article class="card hidden" id="pace-card" aria-live="polite"></article>
+
+        <article class="card hidden" id="spec-card" aria-live="polite"></article>
+
+
+        <article class="card" id="days-month-card">
+          <h2>Calendar</h2>
+          <div id="month-days"></div>
+        </article>
+
+
+        <article class="card sweep hidden" id="salary-card" aria-live="polite">
+          <h2 id="salary-title"></h2>
+          <div class="row-actions"><button class="btn" type="button" id="salary-no">Not now</button><button class="btn" type="button" id="salary-plan">Plan it</button><button class="btn primary" type="button" id="salary-yes"></button></div>
+        </article>
+
+        <article class="card sweep hidden" id="sweep-card" aria-live="polite">
+          <h2 id="sweep-title"></h2>
+          <div class="two">
+            <div class="field" id="sweep-goal-field"><label for="sweep-goal">Goal</label><select id="sweep-goal"></select></div>
+            <div class="field"><label for="sweep-amount">Amount (₹)</label><input id="sweep-amount" type="number" inputmode="decimal" min="1" step="1" /></div>
+          </div>
+          <div class="row-actions"><button class="btn" type="button" id="sweep-keep">Keep it</button><button class="btn primary" type="button" id="sweep-move">Move to goal</button></div>
+        </article>
+
+        <article class="card hidden" id="bills-card" aria-live="polite"></article>
+
+        <article class="card hidden" id="owed-card" aria-live="polite"></article>
+      </div>
+
+      <div class="stack hidden" id="period-panel">
+        <div class="plan-bar" id="plan-bar"><select id="plan-select" aria-label="Plan"></select><button class="btn small" id="plan-edit" type="button">Edit</button><button class="btn small" id="plan-new" type="button">New plan</button></div>
+
+        <form class="card stack hidden" id="plan-form">
+          <h2 id="plan-form-title">New plan</h2>
+          <div class="field"><label for="plan-note">Name</label><input id="plan-note" maxlength="80" autocomplete="off" /></div>
+          <div class="two">
+            <div class="field"><label for="plan-amount">Total budget (₹)</label><input id="plan-amount" type="number" inputmode="decimal" min="0.01" step="0.01" /></div>
+            <div class="field"><label for="plan-daily">Daily limit (₹)</label><input id="plan-daily" type="number" inputmode="decimal" min="0.01" step="0.01" /></div>
+          </div>
+          <div class="two">
+            <div class="field"><label for="plan-start">From</label><input id="plan-start" type="date" required /></div>
+            <div class="field"><label for="plan-end">To</label><input id="plan-end" type="date" required /></div>
+          </div>
+          <p class="form-note error" id="plan-error" role="alert"></p>
+          <div class="row-actions"><button class="btn" type="button" id="plan-cancel">Cancel</button><button class="btn primary" type="submit">Save</button></div>
+        </form>
+
+        <div class="stack" id="plan-view">
+          <article class="hero" id="phero" aria-live="polite">
+            <p class="hero-label" id="phero-label"></p>
+            <p class="hero-amount" id="phero-amount"></p>
+            <div class="hero-bar" role="presentation"><div class="hero-bar-fill" id="phero-bar"></div></div>
+            <div class="stat-row" id="stats-plan" aria-label="This plan">
+                <button class="stat stat-tap" id="pstat-budget-btn" type="button" aria-label="Change the budget"><span>Budget ✎</span><strong id="pstat-budget">₹0</strong></button>
+                <div class="stat"><span>Spent</span><strong id="pstat-spent">₹0</strong></div>
+                <div class="stat"><span>Left</span><strong id="pstat-left">₹0</strong></div>
+            </div>
+            <p class="hero-sub" id="phero-sub"></p>
+            <p class="hero-foot" id="phero-foot"></p>
+          </article>
+          <article class="card" id="days-plan-card">
+            <h2>Calendar</h2>
+            <div id="plan-days"></div>
+          </article>
+          <button class="btn danger full" id="plan-delete" type="button">Delete plan</button>
+        </div>
+      </div>
+
+      <article class="card hidden" id="recur-card" aria-live="polite"></article>
+      <article class="card hidden" id="cash-card" aria-live="polite"></article>
+      <article class="card hidden" id="recap-card" aria-live="polite"></article>
+
+    </section>
+
+    <!-- ADD AN EXPENSE -->
+    <section class="view hidden" id="view-add" aria-labelledby="h-add">
+      <div class="view-head"><h1 id="h-add" tabindex="-1">Add expense</h1></div>
+      <form class="line-row" id="line-form"><input class="line-input" id="line-input" placeholder="What did you spend? e.g. chai 20" maxlength="100" autocomplete="off" enterkeyhint="done" /><button class="icon-btn mic hidden" id="voice-btn" type="button" aria-label="Say your expense"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button></form>
+      <div class="spot" id="line-spot" aria-live="polite"></div>
+      <div class="kp-goals hidden" id="kp-goals" role="group" aria-label="Goal"></div>
+      <div class="cat-pick" id="kp-cats" role="group" aria-label="Category"></div>
+      <div class="kp-chips" role="group" aria-label="When">
+        <button class="chip-btn on" type="button" data-kpdate="0">Today</button>
+        <button class="chip-btn" type="button" data-kpdate="-1">Yesterday</button>
+        <button class="chip-btn" type="button" data-kpdate="pick">Date</button>
+        <button class="chip-btn" type="button" id="kp-cash" aria-pressed="false">Cash</button>
+      </div>
+      <input class="kp-date hidden" id="kp-date" type="date" aria-label="Date" />
+      <div class="kp-dock" id="kp-dock">
+        <p class="form-note error" id="kp-error" role="alert"></p>
+        <button class="btn primary full" id="kp-add" type="button">Add</button>
+      </div>
+      <article class="card hidden" id="add-card">
+        <form id="type-form" class="type-form">
+          <label for="type-input">Add an expense</label>
+          <div class="type-row"><input id="type-input" placeholder="What did you spend?" autocomplete="off" enterkeyhint="done" /><button class="btn primary" type="submit">Add</button></div>
+          <p class="hint" id="type-preview" role="status"></p>
+          <div class="example-row" id="type-examples" aria-label="Examples"></div>
+        </form>
+      </article>
+      <article class="card">
+        <h2>Added recently</h2>
+        <div id="recent-list" class="list"></div>
+      </article>
+    </section>
+
+    <!-- REVIEW -->
+    <section class="view hidden" id="view-review" aria-labelledby="h-review">
+      <div class="view-head"><h1 id="h-review" tabindex="-1">Auto add</h1></div>
+
+      <article class="card lite-only" id="lite-note">
+        <h2>Add by hand</h2>
+        <p>This edition of Penny does not read your messages or notifications, so nothing is picked up for you. Add what you spend in the Add tab, and add your bills in Bills and payday.</p>
+      </article>
+
+      <ol class="steps hidden" id="auto-card" aria-live="polite">
+        <li class="step" id="step-allow">
+          <span class="step-dot" aria-hidden="true">1</span>
+          <div class="step-body">
+            <div class="step-top"><strong>Allow messages</strong><button class="btn small hidden" id="step-allow-btn" type="button">Allow</button></div>
+            <p class="hint">Your phone asks once. Tap Allow.</p>
+          </div>
+        </li>
+        <li class="step" id="step-reading">
+          <span class="step-dot" aria-hidden="true">2</span>
+          <div class="step-body">
+            <div class="step-top"><label for="auto-toggle" id="auto-title">Turn on reading</label><input type="checkbox" class="switch" id="auto-toggle" role="switch" /></div>
+            <p class="hint" id="auto-note">Penny then reads your bank messages as they arrive.</p>
+            <p class="form-note error" id="auto-help" role="status"></p>
+            <div class="stack" id="auto-actions"></div>
+          </div>
+        </li>
+        <li class="step hidden" id="extras-card">
+          <span class="step-dot" aria-hidden="true">3</span>
+          <div class="step-body">
+            <div class="step-top"><label for="quick-toggle">Notification bar</label><input type="checkbox" class="switch" id="quick-toggle" role="switch" /></div>
+            <p class="hint" id="quick-note">Puts a box in your notification bar. Type something like chai 20 there and Penny adds it, without opening the app.</p>
+            <p class="form-note error" id="extras-help" role="status"></p>
+            <div class="stack" id="extras-actions"></div>
+          </div>
+        </li>
+        <li class="step hidden" id="upi-card">
+          <span class="step-dot" aria-hidden="true">4</span>
+          <div class="step-body">
+            <div class="step-top"><label for="upi-toggle">Bills from UPI apps</label><input type="checkbox" class="switch" id="upi-toggle" role="switch" /></div>
+            <p class="hint" id="upi-note">Penny reads bill reminders in Google Pay, PhonePe, Paytm, BHIM and CRED, and adds them as bills. It ignores everything else and nothing leaves your phone.</p>
+            <p class="form-note error" id="upi-help" role="status"></p>
+            <div class="stack" id="upi-actions"></div>
+          </div>
+        </li>
+      </ol>
+
+      <article class="card hidden">
+        <h2>Paste a bank message</h2>
+        <form id="paste-form">
+          <label class="sr-only" for="paste-input">Bank message</label>
+          <textarea id="paste-input" rows="2" placeholder="Paste message"></textarea>
+          <button class="btn primary" type="submit">Add</button>
+        </form>
+        <ul class="paste-result" id="paste-result" aria-live="polite"></ul>
+      </article>
+
+    </section>
+
+    <!-- GOALS -->
+    <section class="view hidden" id="view-goals" aria-labelledby="h-goals">
+      <div class="view-head"><h1 id="h-goals" tabindex="-1">Savings</h1></div>
+      <button class="btn primary new-goal-btn" id="toggle-goal-form" type="button">+ New goal</button>
+      <div id="goals-list" class="goal-rows"></div>
+    </section>
+
+    <section class="view hidden" id="view-newgoal" aria-labelledby="h-newgoal">
+      <div class="view-head"><a class="back" href="#goals"><span class="ico ico-left" aria-hidden="true"></span>Back</a><h1 id="h-newgoal" tabindex="-1"><span id="goal-heading">New goal</span></h1></div>
+      <form id="goal-form" class="goal-form">
+        <div class="field"><label for="g-title">Goal name</label><input id="g-title" maxlength="80" placeholder="e.g. New phone" required /></div>
+        <div class="field"><label for="g-target">Target amount (₹)</label><input id="g-target" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="e.g. 60000" required /></div>
+        <div class="two">
+          <div class="field"><label for="g-date">Save by</label><input id="g-date" type="date" /></div>
+          <div class="field"><label for="g-days">Or in days</label><input id="g-days" type="number" inputmode="numeric" min="1" step="1" placeholder="e.g. 90" /></div>
+        </div>
+        <label class="switch-row" for="g-auto"><span><strong>Save a little every day</strong><em id="g-auto-note">Moves a little from your daily limit each day</em></span><input type="checkbox" id="g-auto" class="switch" /></label>
+        <div class="g-plan hidden" id="g-plan">
+          <p class="g-plan-title">How much can you save?</p>
+          <div class="own-row"><span aria-hidden="true">₹</span><input id="g-own" type="number" inputmode="decimal" min="1" step="1" placeholder="e.g. 10" aria-label="Amount you can save" /><select id="g-own-unit" aria-label="How often"><option value="day">a day</option><option value="month">a month</option><option value="year">a year</option></select></div>
+          <p class="plan-result" id="g-plan-line" aria-live="polite"></p>
+          <p class="g-plan-sub">Or pick how long you want to take</p>
+          <div class="plan-opts" id="g-plan-opts"></div>
+          <div class="how" role="radiogroup" aria-label="How to save it">
+            <label class="how-opt"><input type="radio" name="g-how" value="limit" checked /><span><strong>Cut it from my daily limit</strong><em>Taken out of each day's limit for you</em></span></label>
+            <label class="how-opt"><input type="radio" name="g-how" value="manual" /><span><strong>I will add it myself</strong><em>Your daily limit stays the same. Penny shows what to put away each day.</em></span></label>
+          </div>
+        </div>
+        <p class="form-note error" id="goal-error" role="alert"></p>
+        <div class="page-actions"><button class="btn primary" type="submit" id="goal-save">Save goal</button><button class="link-btn" type="button" id="cancel-goal">Cancel</button></div>
+      </form>
+    </section>
+
+    <!-- HISTORY -->
+    <section class="view hidden" id="view-history" aria-labelledby="h-history">
+      <div class="view-head"><a class="back" href="#more"><span class="ico ico-left" aria-hidden="true"></span>Back</a><h1 id="h-history" tabindex="-1">Transactions</h1></div>
+      <form class="card hidden" id="tx-form">
+        <label for="tx-input">Add an expense</label>
+        <div class="type-row"><input id="tx-input" placeholder="What did you spend?" autocomplete="off" enterkeyhint="done" /><button class="btn primary" type="submit">Add</button></div>
+        <p class="hint" id="tx-preview" role="status"></p>
+      </form>
+      <div class="period-nav">
+        <button class="icon-btn" id="hist-prev" type="button" aria-label="Earlier period"><span class="ico ico-left" aria-hidden="true"></span></button>
+        <div class="period-nav-title"><strong id="hist-title"></strong><span id="hist-sub"></span></div>
+        <button class="icon-btn" id="hist-next" type="button" aria-label="Later period"><span class="ico ico-right" aria-hidden="true"></span></button>
+      </div>
+      <article class="card hidden" id="hist-summary" aria-live="polite"></article>
+      <article class="card hidden" id="hist-bills"></article>
+      <article class="card"><h2>Where your money went</h2><div id="hist-cats" class="stack"></div></article>
+      <article class="card hidden" id="hist-list-card">
+        <h2 id="hist-list-title">Expenses</h2>
+        <div class="field hidden"><label class="sr-only" for="hist-search">Search expenses</label><input id="hist-search" type="search" placeholder="Search by name, category or amount" autocomplete="off" /></div>
+        <div id="hist-list" class="list"></div>
+      </article>
+    </section>
+
+    <!-- BILLS & PAYDAY -->
+    <section class="view hidden" id="view-bills" aria-labelledby="h-bills">
+      <div class="view-head"><a class="back" href="#more"><span class="ico ico-left" aria-hidden="true"></span>Back</a><h1 id="h-bills" tabindex="-1">Bills &amp; payday</h1></div>
+
+      <article class="card">
+        <h2>When does your month start?</h2>
+        <form id="cycle-form" class="stack">
+          <label class="choice-row"><input type="radio" name="cycle-mode" value="month" /> <span>The calendar month (1st to the last day)</span></label>
+          <label class="choice-row"><input type="radio" name="cycle-mode" value="payday" /> <span>On my payday</span></label>
+          <div class="field" id="payday-field"><label for="payday-day">Payday is on day</label><input id="payday-day" type="number" inputmode="numeric" min="1" max="31" step="1" placeholder="e.g. 25" /></div>
+        </form>
+      </article>
+
+      <article class="card hidden" id="recur-bills">
+        <h2>Repeating payments</h2>
+        <div id="recur-bills-list" class="list"></div>
+      </article>
+
+      <article class="card">
+        <h2>This period</h2>
+        <div id="bill-rows" class="list"></div>
+      </article>
+
+      <article class="card" id="bill-add-card">
+        <button class="link-row" id="bill-add-toggle" type="button" aria-expanded="false" aria-controls="bill-form"><span>Add a bill</span><span class="ico ico-right" aria-hidden="true"></span></button>
+        <form id="bill-form" class="stack hidden">
+          <div class="field"><label for="bill-title">What is it?</label><input id="bill-title" maxlength="80" placeholder="e.g. Rent, Netflix, Phone EMI" autocomplete="off" required /></div>
+          <div class="two">
+            <div class="field"><label for="bill-amount">Amount (₹)</label><input id="bill-amount" type="number" inputmode="decimal" min="0.01" step="0.01" required /></div>
+            <div class="field"><label for="bill-date">Due on</label><input id="bill-date" type="date" required /></div>
+          </div>
+          <div class="field"><label for="bill-repeat">How often?</label><select id="bill-repeat"><option value="monthly">Every month</option><option value="once">Just once</option></select></div>
+          <p class="form-note error" id="bill-error" role="alert"></p>
+          <button class="btn primary" type="submit">Add bill</button>
+        </form>
+      </article>
+
+      <article class="card">
+        <h2>Your bills</h2>
+        <div id="bill-list" class="list"></div>
+      </article>
+    </section>
+
+    <!-- ACCOUNT BALANCES -->
+    <section class="view hidden" id="view-accounts" aria-labelledby="h-accounts">
+      <div class="view-head"><a class="back" href="#more"><span class="ico ico-left" aria-hidden="true"></span>Back</a><div class="head-row"><h1 id="h-accounts" tabindex="-1">Account balances</h1>
+        <button class="user-btn" id="hide-btn" type="button" aria-label="Hide amounts" aria-pressed="false">
+      <svg class="i-eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+      <svg class="i-eye-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/></svg>
+    </button>
+      </div></div>
+      <article class="card goals-total" id="acct-summary"></article>
+      <div id="acct-list" class="stack"></div>
+      <article class="card" id="acct-add-card">
+        <button class="link-row" id="acct-add-toggle" type="button" aria-expanded="false" aria-controls="acct-add-form"><span>Add an account</span><span class="ico ico-right" aria-hidden="true"></span></button>
+        <form id="acct-add-form" class="stack hidden">
+          <div class="field"><label for="acct-add-name">Name</label><input id="acct-add-name" maxlength="40" placeholder="e.g. Salary account" autocomplete="off" /></div>
+          <div class="two">
+            <div class="field"><label for="acct-add-last4">Last digits <span class="opt">(optional)</span></label><input id="acct-add-last4" inputmode="numeric" maxlength="4" placeholder="e.g. 4212" autocomplete="off" /></div>
+            <div class="field"><label for="acct-add-balance">Balance (₹)</label><input id="acct-add-balance" type="number" inputmode="decimal" min="0" step="0.01" required /></div>
+          </div>
+          <p class="form-note error" id="acct-add-error" role="alert"></p>
+          <button class="btn primary" type="submit">Add account</button>
+        </form>
+      </article>
+    </section>
+
+    <!-- WHO OWES ME -->
+    <section class="view hidden" id="view-owed" aria-labelledby="h-owed">
+      <div class="view-head"><a class="back" href="#more"><span class="ico ico-left" aria-hidden="true"></span>Back</a><h1 id="h-owed" tabindex="-1">Who owes me</h1></div>
+      <div id="settle-section" class="stack hidden">
+        <div class="section-row"><h2 id="settle-title">Paid back?</h2></div>
+        <div id="settle-list" class="stack"></div>
+      </div>
+      <article class="card goals-total"><span>Owed to you</span><strong id="owed-total">₹0</strong></article>
+      <form class="card stack" id="owed-add-form">
+        <h2>Add someone who owes you</h2>
+        <div class="field"><label for="owed-add-name">Name</label><input id="owed-add-name" maxlength="40" autocomplete="off" required /></div>
+        <div class="two">
+          <div class="field"><label for="owed-add-amount">Amount (₹)</label><input id="owed-add-amount" type="number" inputmode="decimal" min="0.01" step="0.01" required /></div>
+          <div class="field"><label for="owed-add-note">What for <span class="opt">(optional)</span></label><input id="owed-add-note" maxlength="60" autocomplete="off" /></div>
+        </div>
+        <p class="form-note error" id="owed-add-error" role="alert"></p>
+        <button class="btn primary" type="submit">Add</button>
+      </form>
+      <div id="owed-list" class="stack"></div>
+      <details class="card" id="owed-settled-wrap"><summary id="owed-settled-title">Paid back</summary><div id="owed-settled" class="list"></div></details>
+    </section>
+
+    <!-- CASH IN HAND -->
+    <section class="view hidden" id="view-cash" aria-labelledby="h-cash">
+      <div class="view-head"><a class="back" href="#more"><span class="ico ico-left" aria-hidden="true"></span>Back</a><h1 id="h-cash" tabindex="-1">Cash in hand</h1></div>
+      <p class="cash-note">Cash in your pocket. Add ATM cash here so it is not counted as spending, and type cash after a payment, like chai 20 cash.</p>
+      <article class="card goals-total"><span>In your pocket</span><strong id="cash-total">₹0</strong></article>
+      <form class="card stack" id="cash-add-form">
+        <h2>Add cash</h2>
+        <div class="two">
+          <div class="field"><label for="cash-amount">Amount (₹)</label><input id="cash-amount" type="number" inputmode="decimal" min="0.01" step="0.01" required /></div>
+          <div class="field"><label for="cash-date">Date</label><input id="cash-date" type="date" required /></div>
+        </div>
+        <p class="form-note error" id="cash-error" role="alert"></p>
+        <button class="btn primary" type="submit">Add</button>
+      </form>
+      <article class="card"><h2>Cash history</h2><div id="cash-list" class="list"></div></article>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="view hidden" id="view-settings" aria-labelledby="h-settings">
+      <div class="view-head"><a class="back" href="#more"><span class="ico ico-left" aria-hidden="true"></span>Back</a><h1 id="h-settings" tabindex="-1">Backup &amp; lock</h1></div>
+      <article class="card" id="lock-setting">
+        <div class="setting"><div><strong>App lock</strong><span id="lock-method"></span></div><button class="btn small" id="lock-change" type="button">Change</button></div>
+      </article>
+      <article class="card" id="backup-card">
+        <h2>Backup</h2>
+        <div class="field"><label for="backup-since">From date</label><input id="backup-since" type="date" /></div>
+        <div class="stack">
+          <button class="btn primary" id="backup-save" type="button">Back up</button>
+          <button class="btn" id="backup-restore" type="button">Restore</button>
+          <input id="backup-file" type="file" accept="application/json,.json" class="sr-only" tabindex="-1" aria-hidden="true" />
+        </div>
+        <p class="form-note error" id="backup-error" role="alert"></p>
+      </article>
+    </section>
+
+    <!-- RECENTLY DELETED -->
+    <section class="view hidden" id="view-trash" aria-labelledby="h-trash">
+      <div class="view-head"><a class="back" href="#more"><span class="ico ico-left" aria-hidden="true"></span>Back</a><h1 id="h-trash" tabindex="-1">Recently deleted</h1></div>
+      <p class="cash-note">A goal, a Specific period plan or a monthly budget you delete stays here for 30 days. Restore it to put it back exactly as it was.</p>
+      <div id="trash-list" class="list"></div>
+    </section>
+
+    <!-- MORE -->
+    <section class="view hidden" id="view-more" aria-labelledby="h-more">
+      <div class="view-head"><h1 id="h-more" tabindex="-1">Menu</h1></div>
+      <div class="menu-sum">
+        <div><span>Spent this month</span><strong id="menu-spent">₹0</strong></div>
+        <div class="right"><span>Left</span><strong id="menu-left">₹0</strong></div>
+      </div>
+      <div class="menu-group"><p class="menu-label">Money</p>
+        <a class="menu-row" href="#history"><span>Transactions</span><span class="ico ico-right" aria-hidden="true"></span></a>
+        <a class="menu-row" href="#accounts"><span>Account balances</span><span class="ico ico-right" aria-hidden="true"></span></a>
+        <a class="menu-row" href="#cash"><span>Cash in hand</span><span class="ico ico-right" aria-hidden="true"></span></a>
+      </div>
+      <div class="menu-group"><p class="menu-label">Plans</p>
+        <a class="menu-row" href="#bills"><span>Bills &amp; payday</span><span class="ico ico-right" aria-hidden="true"></span></a>
+      </div>
+      <div class="menu-group"><p class="menu-label">Safety</p>
+        <a class="menu-row" href="#settings"><span>Backup &amp; lock</span><span class="ico ico-right" aria-hidden="true"></span></a>
+        <a class="menu-row" href="#trash"><span>Recently deleted <em class="menu-count hidden" id="trash-count"></em></span><span class="ico ico-right" aria-hidden="true"></span></a>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabbar" aria-label="Main">
+    <a href="#today" data-tab="today"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Home</span></a>
+    <a href="#add" data-tab="add"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg><span>Add</span></a>
+    <a href="#review" data-tab="review"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13l3-8h12l3 8v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M3 13h5l1 3h6l1-3h5"/></svg><span>Auto add</span></a>
+    <a href="#goals" data-tab="goals"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg><span>Savings</span></a>
+    <a href="#more" data-tab="more"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg><span>Menu</span></a>
+  </nav>
+</div>
+
+<dialog id="budget-dialog" class="dialog sheet" aria-labelledby="budget-title">
+  <div class="sheet-head"><h2 id="budget-title">Monthly budget</h2><button class="icon-btn" id="budget-close" type="button" aria-label="Close"><span class="ico ico-x" aria-hidden="true"></span></button></div>
+  <form method="dialog" id="budget-form" class="stack">
+    <div class="field"><label for="budget-input">For the whole month (₹)</label><input id="budget-input" type="number" inputmode="decimal" min="0" step="0.01" required /></div>
+    <div id="split-bar" aria-live="polite"></div>
+    <div class="needs">
+      <h3>Specific budgets</h3>
+      <div id="need-list" class="stack"></div>
+      <button class="link-btn add-line" id="pot-new" type="button">+ Add a specific budget</button>
+    </div>
+    <fieldset class="how spec-how hidden" id="spec-how">
+      <legend>Where does your specific budget come from?</legend>
+      <label class="how-opt"><input type="radio" name="spec-mode" value="inside" checked /><span><strong>Cut it from my monthly budget</strong><em>Your daily money is the monthly budget minus the specific budgets.</em></span></label>
+      <label class="how-opt"><input type="radio" name="spec-mode" value="extra" /><span><strong>Keep it separate</strong><em>It is extra, on top of the monthly budget. Your daily money stays as it is.</em></span></label>
+    </fieldset>
+    <div class="bill-lines hidden" id="bill-lines">
+      <h3>Bills due</h3>
+      <div id="bill-lines-list"></div>
+      <p class="hint">Added from your bills and messages. This money is set aside for you.</p>
+    </div>
+    <dl class="compare" id="salary-lines"></dl>
+    <p class="form-note error" id="budget-error" role="alert"></p>
+    <div class="funds" id="funds-box">
+      <h3>Add money to this month</h3>
+      <p class="hint">It is added to the amount at the top. You can change that amount again any time.</p>
+      <div class="fund-add"><span aria-hidden="true">₹</span><input id="fund-quick" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="Amount to add" aria-label="Amount to add to this month" /><button class="btn small" type="button" id="budget-add-money">Add money</button></div>
+      <p class="form-note error" id="fund-quick-error" role="alert"></p>
+    </div>
+    <div class="sheet-actions"><button class="btn primary" type="submit">Save budget</button><button class="link-btn danger-text hidden" type="button" id="budget-delete">Delete budget</button></div>
+  </form>
+</dialog>
+
+<dialog id="edit-dialog" class="dialog sheet" aria-labelledby="edit-title">
+  <div class="sheet-head"><h2 id="edit-title">Edit expense</h2><button class="icon-btn" id="edit-close" type="button" aria-label="Close"><span class="ico ico-x" aria-hidden="true"></span></button></div>
+  <form id="edit-form" class="stack">
+    <div class="field"><label for="edit-desc">What was it?</label><input id="edit-desc" maxlength="100" autocomplete="off" /></div>
+    <div class="two">
+      <div class="field"><label for="edit-amount">Amount (₹)</label><input id="edit-amount" type="number" inputmode="decimal" min="0.01" step="0.01" required /></div>
+      <div class="field"><label for="edit-date">Date</label><input id="edit-date" type="date" required /></div>
+    </div>
+    <div class="field"><label for="edit-category">Category</label><select id="edit-category"></select></div>
+    <div class="field hidden" id="edit-pot-field"><label for="edit-pot">Budget</label><select id="edit-pot"></select></div>
+    <label class="choice-row"><input type="checkbox" id="edit-cash" /> <span>Paid in cash</span></label>
+    <button class="btn small hidden" type="button" id="edit-split">Split with others</button>
+    <p class="form-note error" id="edit-error" role="alert"></p>
+    <div class="row-actions"><button class="btn danger" type="button" id="edit-delete">Delete</button><button class="btn primary" type="submit">Save</button></div>
+  </form>
+</dialog>
+
+<dialog id="split-dialog" class="dialog sheet" aria-labelledby="split-title">
+  <div class="sheet-head"><h2 id="split-title">Who owes you?</h2><button class="icon-btn" id="split-close" type="button" aria-label="Close"><span class="ico ico-x" aria-hidden="true"></span></button></div>
+  <p class="muted" id="split-intro"></p>
+  <form id="split-form" class="stack">
+    <div id="split-rows" class="stack"></div>
+    <div class="row-actions"><button class="btn small" type="button" id="split-add-row">+ Add person</button><button class="btn small" type="button" id="split-equal">Split equally</button></div>
+    <p class="hint" id="split-share" role="status"></p>
+    <p class="form-note error" id="split-error" role="alert"></p>
+    <div class="row-actions"><button class="btn" type="button" id="split-cancel">Cancel</button><button class="btn primary" type="submit">Save</button></div>
+  </form>
+</dialog>
+
+<dialog id="cat-dialog" class="dialog sheet" aria-labelledby="cat-title">
+  <div class="sheet-head"><h2 id="cat-title">Which category?</h2><button class="icon-btn" id="cat-close" type="button" aria-label="Close"><span class="ico ico-x" aria-hidden="true"></span></button></div>
+  <p class="hint" id="cat-line"></p>
+  <div class="chip-grid" id="cat-options"></div>
+</dialog>
+
+<dialog id="aside-dialog" class="dialog sheet" aria-labelledby="aside-title">
+  <div class="sheet-head"><h2 id="aside-title">Set aside for a goal</h2><button class="icon-btn" id="aside-close" type="button" aria-label="Close"><span class="ico ico-x" aria-hidden="true"></span></button></div>
+  <form id="aside-form" class="stack">
+    <div class="field"><label for="aside-goal">Which goal?</label><select id="aside-goal"></select></div>
+    <div class="field"><label for="aside-amount">Amount (₹)</label><input id="aside-amount" type="number" inputmode="decimal" min="0.01" step="0.01" required /></div>
+    <div class="field"><label for="aside-date">Date</label><input id="aside-date" type="date" required /></div>
+    <p class="hint">It comes out of your daily limit for that day and goes to the goal.</p>
+    <p class="form-note error" id="aside-error" role="alert"></p>
+    <div class="row-actions"><button class="btn" type="button" id="aside-cancel">Cancel</button><button class="btn primary" type="submit">Set aside</button></div>
+  </form>
+  <div class="stack hidden" id="aside-empty">
+    <p class="hint">You have no goals yet. Make one, then set money aside for it here.</p>
+    <button class="btn primary" type="button" id="aside-new">New goal</button>
+  </div>
+</dialog>
+
+<dialog id="spec-dialog" class="dialog sheet" aria-labelledby="spec-title">
+  <div class="sheet-head"><h2 id="spec-title">Add expense</h2><button class="icon-btn" id="spec-close" type="button" aria-label="Close"><span class="ico ico-x" aria-hidden="true"></span></button></div>
+  <form id="spec-form" class="stack">
+    <p class="hint" id="spec-left"></p>
+    <div class="field"><label for="spec-amount">Amount (₹)</label><input id="spec-amount" type="number" inputmode="decimal" min="0.01" step="0.01" required /></div>
+    <div class="field"><label for="spec-note">What was it? <span class="opt">(optional)</span></label><input id="spec-note" maxlength="100" autocomplete="off" /></div>
+    <div class="field"><label for="spec-date">Date</label><input id="spec-date" type="date" required /></div>
+    <p class="form-note error" id="spec-error" role="alert"></p>
+    <div class="row-actions"><button class="btn" type="button" id="spec-cancel">Cancel</button><button class="btn primary" type="submit">Add expense</button></div>
+  </form>
+</dialog>
+
+<dialog id="fund-dialog" class="dialog">
+  <form id="fund-form" method="dialog">
+    <h2 id="fund-title">Add money</h2>
+    <div class="field"><label for="fund-amount">Amount (₹)</label><input id="fund-amount" type="number" inputmode="decimal" min="0.01" step="0.01" required /></div>
+    <div class="field"><label for="fund-date">Date</label><input id="fund-date" type="date" required /></div>
+    <p class="form-note error" id="fund-error" role="alert"></p>
+    <div class="row-actions"><button class="btn" type="button" id="fund-cancel">Cancel</button><button class="btn primary" type="submit">Add</button></div>
+  </form>
+</dialog>
+
+<dialog id="pot-dialog" class="dialog sheet" aria-labelledby="pot-title">
+  <div class="sheet-head"><h2 id="pot-title">New budget</h2><button class="icon-btn" id="pot-close" type="button" aria-label="Close"><span class="ico ico-x" aria-hidden="true"></span></button></div>
+  <form id="pot-form" class="stack">
+    <div class="preset-row" id="pot-presets"><button class="btn small" type="button" data-preset="Shopping">Shopping</button><button class="btn small" type="button" data-preset="Orders">Orders</button><button class="btn small" type="button" data-preset="Travel">Travel</button></div>
+    <div class="field"><label for="pot-name">Name</label><input id="pot-name" maxlength="30" autocomplete="off" required /></div>
+    <div class="field"><label for="pot-limit">Budget per month (₹)</label><input id="pot-limit" type="number" inputmode="decimal" min="0.01" step="0.01" required /></div>
+    <div class="field"><label>Spending that counts</label><div class="chip-grid" id="pot-cats"></div></div>
+    <div class="field"><label for="pot-keywords">Shop names <span class="opt">(optional)</span></label><input id="pot-keywords" placeholder="swiggy, zomato" autocomplete="off" /></div>
+    <p class="form-note error" id="pot-error" role="alert"></p>
+    <div class="row-actions"><button class="btn danger hidden" type="button" id="pot-delete">Delete</button><button class="btn primary" type="submit">Save</button></div>
+  </form>
+</dialog>
+
+<dialog id="afford-dialog" class="dialog sheet" aria-labelledby="afford-title">
+  <div class="sheet-head"><h2 id="afford-title">Can I afford this?</h2><button class="icon-btn" id="afford-close" type="button" aria-label="Close"><span class="ico ico-x" aria-hidden="true"></span></button></div>
+  <div class="field"><label for="afford-price">Price (₹)</label><input id="afford-price" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="e.g. 2500" /></div>
+  <div class="field"><label for="afford-label">What is it? <span class="opt">(optional)</span></label><input id="afford-label" maxlength="100" placeholder="e.g. Headphones" autocomplete="off" /></div>
+  <div id="afford-result" aria-live="polite"></div>
+  <div class="row-actions"><button class="btn" id="afford-done" type="button">Close</button><button class="btn primary" id="afford-add" type="button" disabled>I bought it</button></div>
+</dialog>
+
+<dialog id="restore-dialog" class="dialog">
+  <h2>Replace your data?</h2>
+  <p id="restore-text"></p>
+  <div class="row-actions"><button class="btn" id="restore-cancel" type="button">Cancel</button><button class="btn danger" id="restore-confirm" type="button">Replace my data</button></div>
+</dialog>
+
+<dialog id="goal-dialog" class="dialog">
+  <div id="goal-dialog-body"></div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-text"></span><button type="button" id="toast-action" class="hidden"></button></div>
+
+<script src="expense-utils.js"></script>
+<script src="sms-parser.js"></script>
+<script src="budget-math.js"></script>
+<script src="goals.js"></script>
+<script src="cycle.js"></script>
+<script src="bills.js"></script>
+<script src="owed.js"></script>
+<script src="accounts.js"></script>
+<script src="pots.js"></script>
+<script src="trash.js"></script>
+<script src="statement.js"></script>
+<script src="pace.js"></script>
+<script src="recap.js"></script>
+<script src="recurring.js"></script>
+<script src="cash.js"></script>
+<script src="upi.js"></script>
+<script src="salary.js"></script>
+<script src="extras-bridge.js"></script>
+<script src="sweep.js"></script>
+<script src="afford.js"></script>
+<script src="expenses.js"></script>
+<script src="insights.js"></script>
+<script src="inbox.js"></script>
+<script src="sms-bridge.js"></script>
+<script src="store.js"></script>
+<script src="applock.js"></script>
+<script src="backup.js"></script>
+<script src="lock.js"></script>
+<script src="lockui.js"></script>
+<script src="selfcheck.js"></script>
+<script src="today.js"></script>
+</body>
+</html>

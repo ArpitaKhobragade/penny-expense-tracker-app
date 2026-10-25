@@ -1,0 +1,42 @@
+const assert = require('node:assert/strict');
+const { parseNaturalExpense, calculateSummary, detectCategory, formatDate } = require('./expense-utils.js');
+let passed = 0;
+function test(name, fn) { fn(); passed++; console.log(`✓ ${name}`); }
+test('parses rupee symbol and food category', () => { const r = parseNaturalExpense('Spent ₹120 on lunch', new Date('2026-10-17T10:00:00')); assert.equal(r.ok, true); assert.equal(r.expense.amount, 120); assert.equal(r.expense.category, 'Food'); assert.match(r.expense.description, /lunch/i); });
+test('parses amount-first phrase', () => { const r = parseNaturalExpense('Coffee 180 today', new Date('2026-10-17T10:00:00')); assert.equal(r.ok, true); assert.equal(r.expense.amount, 180); assert.equal(r.expense.category, 'Food'); });
+test('parses comma-separated amount', () => { const r = parseNaturalExpense('Paid Rs. 1,250 for groceries', new Date('2026-10-17T10:00:00')); assert.equal(r.ok, true); assert.equal(r.expense.amount, 1250); assert.equal(r.expense.category, 'Food'); });
+test('handles yesterday date', () => { const r = parseNaturalExpense('Spent 450 on cab yesterday', new Date('2026-10-17T10:00:00')); assert.equal(r.ok, true); assert.equal(r.expense.date, '2026-10-16'); assert.equal(r.expense.category, 'Travel'); });
+test('handles day before yesterday before matching yesterday', () => { const r = parseNaturalExpense('Spent 80 on tea day before yesterday', new Date('2026-10-17T10:00:00')); assert.equal(r.ok, true); assert.equal(r.expense.date, '2026-10-15'); });
+test('rejects missing amount', () => { const r = parseNaturalExpense('Lunch with friends'); assert.equal(r.ok, false); });
+test('rejects zero amount', () => { const r = parseNaturalExpense('Spent 0 on lunch'); assert.equal(r.ok, false); });
+test('detects category keywords', () => { assert.equal(detectCategory('Paid for metro'), 'Travel'); assert.equal(detectCategory('Bought medicine'), 'Health'); assert.equal(detectCategory('Random thing'), 'Other'); });
+test('calculates month summary without mixing months', () => { const expenses = [{amount:100,date:'2026-10-01'},{amount:50,date:'2026-10-15'},{amount:900,date:'2026-09-30'}]; const s = calculateSummary(expenses, 500, '2026-10'); assert.equal(s.spent,150); assert.equal(s.remaining,350); assert.equal(s.count,2); });
+test('supports overspending with negative remaining', () => { const s = calculateSummary([{amount:200,date:'2026-10-01'}],100,'2026-10'); assert.equal(s.remaining,-100); assert.equal(s.percent,200); });
+test('formats local calendar date consistently', () => { assert.equal(formatDate(new Date(2026,9,7)), '2026-10-07'); });
+console.log(`\n${passed} tests passed.`);
+
+// Milestone 1 modules (each file prints its own summary)
+require('./tests-sms.js');
+require('./tests-budget.js');
+require('./tests-goals.js');
+require('./tests-inbox.js');
+require('./tests-sweep.js');
+require('./tests-afford.js');
+require('./tests-cycle.js');
+require('./tests-bills.js');
+require('./tests-expenses.js');
+require('./tests-insights.js');
+require('./tests-backup.js');
+require('./tests-hinglish.js');
+require('./tests-owed.js');
+require('./tests-accounts.js');
+require('./tests-simple.js');
+require('./tests-pots.js');
+require('./tests-typeit.js');
+require('./tests-statement.js');
+require('./tests-applock.js');
+require('./tests-goalday.js');
+require('./tests-features.js');
+require('./tests-goaledit.js');
+require('./tests-billdue.js');
+require('./tests-trash.js');

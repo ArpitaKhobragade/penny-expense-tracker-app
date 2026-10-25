@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f7f8fa" />
+  <title>Pocket — Expense Tracker</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="other-money">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#top" aria-label="Pocket home"><span class="brand-mark">p</span><span>Pocket</span></a>
+      <div class="sidebar-label">WORKSPACE</div>
+      <a class="nav-item" data-nav="monthly" href="index.html"><span class="nav-icon">▦</span> Monthly budget</a>
+      <a class="nav-item" data-nav="period" href="period.html"><span class="nav-icon">◷</span> Period budget</a>
+      <a class="nav-item" data-nav="transactions" href="transactions.html"><span class="nav-icon">↕</span> Transactions</a>
+      <a class="nav-item" data-nav="plans" href="future-plans.html"><span class="nav-icon">◎</span> Future plans</a>
+      <a class="nav-item" data-nav="other-money" href="other-money.html"><span class="nav-icon">＋</span> Other money</a>
+      <div class="sidebar-note"><div class="note-icon">✦</div><strong>Small steps add up.</strong><p>Keep an eye on today, and your month will take care of itself.</p></div>
+      <div class="sidebar-footer"><span class="status-dot"></span> Saved on this device</div>
+    </aside>
+
+    <main id="top" class="main-content">
+      <header class="topbar"><div><p class="eyebrow" id="today-label">YOUR MONEY, MADE CLEAR</p><h1>Good to see you.</h1><p class="subheading">A simple view of where your money goes.</p></div><div class="month-control"><label for="month-picker">Viewing month</label><input type="month" id="month-picker" /></div></header>
+
+      <section id="overview" class="stats-grid" aria-label="Monthly summary">
+        <article class="stat-card budget-card"><div class="stat-top"><span>Monthly budget</span><span class="stat-icon">◎</span></div><div class="stat-value" id="budget-value">₹0</div><button class="text-button" id="edit-budget-btn" type="button">Set your budget <span>↗</span></button></article>
+        <article class="stat-card"><div class="stat-top"><span>Total spent</span><span class="stat-icon coral">↗</span></div><div class="stat-value" id="spent-value">₹0</div><div class="stat-foot" id="spent-foot">Across 0 transactions</div></article>
+        <article class="stat-card"><div class="stat-top"><span>Money remaining</span><span class="stat-icon green">⌁</span></div><div class="stat-value" id="remaining-value">₹0</div><div class="stat-foot" id="remaining-foot">Set a budget to get started</div></article>
+      </section>
+
+      <section class="budget-progress panel"><div class="monthly-budget-only"><div class="progress-heading"><div><h2>Monthly budget</h2><p id="progress-caption">Set a budget to track your progress.</p></div><strong id="progress-percent">0%</strong></div><div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div><div class="progress-legend"><span><i class="legend-dot spent-dot"></i> Spent</span><span><i class="legend-dot remaining-dot"></i> Remaining</span><span id="budget-remaining-caption">₹0 left to spend</span></div>
+        <div class="monthly-funds">
+          <div class="monthly-funds-heading"><div><h3>Add money to this month's budget</h3><p>Extra funds increase this month's available budget only. They stay separate from future-goal savings and other money records.</p></div><strong id="monthly-added-total">₹0 added</strong></div>
+          <form id="monthly-fund-form" class="monthly-fund-form">
+            <div class="field"><label for="monthly-fund-amount">Amount (₹)</label><input id="monthly-fund-amount" type="number" min="0.01" step="0.01" placeholder="e.g. 2000" required /></div>
+            <div class="field"><label for="monthly-fund-note">Note (optional)</label><input id="monthly-fund-note" maxlength="100" placeholder="e.g. Extra allowance" /></div>
+            <div class="field"><label for="monthly-fund-date">Date added</label><input id="monthly-fund-date" type="date" required /></div>
+            <button class="primary-button" type="submit">＋ Add funds</button>
+          </form>
+          <div id="monthly-fund-history" class="monthly-fund-history"></div>
+        </div>
+        </div><div class="daily-targets">
+          <div class="monthly-funds-heading"><div><h3>Daily spending target</h3><p>Set a daily limit for today or a target for a specific period. See how much you've spent and how much remains for each day.</p></div><strong id="daily-remaining-badge">Set a daily limit</strong></div>
+          <div class="daily-today-summary">
+            <div><span>Today's limit</span><strong id="daily-limit-value">Not set</strong></div>
+            <div><span>Spent today</span><strong id="daily-spent-value">₹0</strong></div>
+            <div><span>Left today</span><strong id="daily-left-value">—</strong></div>
+          </div>
+          <div class="daily-progress-track"><div class="daily-progress-fill" id="daily-progress-fill"></div></div>
+          <form id="daily-target-form" class="monthly-fund-form daily-target-form">
+            <div class="field"><label for="daily-target-mode">Target type</label><select id="daily-target-mode"><option value="today">Today's limit</option><option value="period">Total target for a date range</option></select></div>
+            <div class="field"><label for="daily-target-amount">Target amount (₹)</label><input id="daily-target-amount" type="number" min="0.01" step="0.01" placeholder="e.g. 500" required /></div>
+            <div class="field"><label for="daily-target-start">Start date</label><input id="daily-target-start" type="date" required /></div>
+            <div class="field daily-end-field hidden"><label for="daily-target-end">End date</label><input id="daily-target-end" type="date" /></div>
+            <div class="field"><label for="daily-target-note">Label (optional)</label><input id="daily-target-note" maxlength="80" placeholder="e.g. Food budget, weekly target" /></div>
+            <button class="primary-button" type="submit">Save target</button>
+          </form>
+          <div id="daily-target-history" class="daily-target-history"></div>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <article class="panel add-panel"><div class="section-heading"><div><p class="eyebrow">ADD AN EXPENSE</p><h2>Where did it go?</h2></div><span class="heading-icon">＋</span></div>
+          <div class="entry-tabs" role="tablist" aria-label="Expense entry method"><button class="entry-tab active" id="form-tab" role="tab" aria-selected="true" type="button">Quick form</button><button class="entry-tab" id="text-tab" role="tab" aria-selected="false" type="button">Type it out ✨</button></div>
+          <form id="expense-form" class="expense-form">
+            <label for="description">What did you spend on?</label><input id="description" name="description" placeholder="e.g. Lunch with friends" maxlength="100" required />
+            <div class="form-row"><div class="field"><label for="amount">Amount (₹)</label><div class="amount-input"><span>₹</span><input id="amount" name="amount" type="number" min="0.01" step="0.01" placeholder="0.00" required /></div></div><div class="field"><label for="category">Category</label><select id="category" name="category"><option>Food</option><option>Travel</option><option>Shopping</option><option>Bills</option><option>Health</option><option>Education</option><option>Entertainment</option><option>Other</option></select></div></div>
+            <label for="expense-date">Date</label><input id="expense-date" name="date" type="date" required />
+            <button class="primary-button" type="submit">Add expense <span>＋</span></button><p class="form-message" id="form-message" role="status"></p>
+          </form>
+          <form id="natural-form" class="natural-form hidden"><label for="natural-input">Write it the way you’d say it</label><textarea id="natural-input" rows="3" placeholder="Spent 120 on lunch today\nPaid ₹450 for cab yesterday"></textarea><p class="helper-text">Try: “Spent ₹250 on groceries” or “Coffee 180 today”.</p><div class="parsed-preview hidden" id="parsed-preview"></div><button class="primary-button" type="submit">Add expense <span>↗</span></button><p class="form-message" id="natural-message" role="status"></p></form>
+        </article>
+
+        <article class="panel category-panel"><div class="section-heading"><div><p class="eyebrow">YOUR BREAKDOWN</p><h2>Spending by category</h2></div><span class="heading-icon muted-icon">◔</span></div><div id="category-breakdown" class="category-breakdown"><div class="empty-state small-empty"><span>◌</span><p>Your spending categories will show up here.</p></div></div></article>
+      </section>
+
+      <section id="transactions" class="panel transactions-panel"><div class="section-heading transaction-heading"><div><p class="eyebrow">THE DETAILS</p><h2>Recent transactions</h2></div><div class="transaction-actions"><select id="category-filter" aria-label="Filter transactions by category"><option value="All">All categories</option><option>Food</option><option>Travel</option><option>Shopping</option><option>Bills</option><option>Health</option><option>Education</option><option>Entertainment</option><option>Other</option></select><span id="transaction-count" class="count-pill">0 items</span></div></div><div class="transaction-list" id="transaction-list"><div class="empty-state"><div class="empty-illustration">↗</div><h3>No expenses yet</h3><p>Add your first expense and your monthly picture will appear here.</p></div></div></section>
+
+      <section id="future-plans" class="panel extra-panel">
+        <div class="section-heading"><div><p class="eyebrow">LOOKING AHEAD</p><h2>Future plans & savings goals</h2><p class="section-subtitle">Track what you want to save for without changing your monthly spending budget.</p></div><span class="heading-icon">◎</span></div>
+        <form id="plan-form" class="inline-add-form">
+          <div class="field"><label for="plan-title">Plan or goal</label><input id="plan-title" maxlength="80" placeholder="e.g. New laptop, trip, emergency fund" required /></div>
+          <div class="field"><label for="plan-target">Target amount (₹)</label><input id="plan-target" type="number" min="0.01" step="0.01" placeholder="e.g. 60000" required /></div>
+          <div class="field"><label for="plan-date">Target date (optional)</label><input id="plan-date" type="date" /></div>
+          <div class="field"><label for="plan-days">Or achieve in (days)</label><input id="plan-days" type="number" min="1" step="1" placeholder="e.g. 60" /></div>
+          <button class="primary-button" type="submit">Create plan <span>＋</span></button>
+        </form>
+        <div id="plans-list" class="plans-list"><div class="empty-state small-empty"><span>◎</span><p>Add a future goal to see how much you have saved and how much is left.</p></div></div>
+      </section>
+
+      <section id="other-money" class="panel extra-panel">
+        <div class="section-heading"><div><p class="eyebrow">SEPARATE FROM YOUR BUDGET</p><h2>Other money & allocations</h2><p class="section-subtitle">Record money received separately, money given to someone, or money set aside for a purpose. These entries do not change your monthly budget or expenses.</p></div><span class="heading-icon muted-icon">↔</span></div>
+        <div class="money-summary-grid">
+          <div class="mini-summary"><span>Extra money received</span><strong id="extra-received-total">₹0</strong></div>
+          <div class="mini-summary"><span>Given / set aside</span><strong id="extra-allocated-total">₹0</strong></div>
+          <div class="mini-summary"><span>Separate balance</span><strong id="extra-balance-total">₹0</strong></div>
+        </div>
+        <form id="other-money-form" class="inline-add-form other-money-form">
+          <div class="field"><label for="other-money-title">Description / person</label><input id="other-money-title" maxlength="100" placeholder="e.g. Money from family, lent to Rahul" required /></div>
+          <div class="field"><label for="other-money-amount">Amount (₹)</label><input id="other-money-amount" type="number" min="0.01" step="0.01" placeholder="e.g. 5000" required /></div>
+          <div class="field"><label for="other-money-type">What happened?</label><select id="other-money-type"><option value="received">Extra money received</option><option value="given">Given / lent to someone</option><option value="set-aside">Set aside / allocated</option><option value="returned">Money returned to me</option></select></div>
+          <div class="field"><label for="other-money-date">Date</label><input id="other-money-date" type="date" required /></div>
+          <div class="field"><label for="other-money-target">Target amount (optional)</label><input id="other-money-target" type="number" min="0.01" step="0.01" placeholder="e.g. 10000" /></div>
+          <div class="field"><label for="other-money-deadline">Target date (optional)</label><input id="other-money-deadline" type="date" /></div>
+          <div class="field"><label for="other-money-days">Or target in (days)</label><input id="other-money-days" type="number" min="1" step="1" placeholder="e.g. 30" /></div>
+          <button class="primary-button" type="submit">Add record <span>＋</span></button>
+        </form>
+        <div id="other-money-list" class="other-money-list"><div class="empty-state small-empty"><span>↔</span><p>Records you add here will appear separately from monthly expenses.</p></div></div>
+      </section>
+      <footer class="page-footer"><span>Made for mindful spending.</span><button id="export-btn" class="text-button" type="button">Export CSV ↓</button><button id="clear-btn" class="text-button danger-text" type="button">Clear all data</button></footer>
+    </main>
+  </div>
+
+  <dialog id="budget-dialog" class="budget-dialog"><form id="budget-form" method="dialog"><div class="dialog-top"><div><p class="eyebrow">YOUR MONTHLY PLAN</p><h2>Set your budget</h2></div><button type="button" class="close-button" id="close-budget" aria-label="Close">×</button></div><p class="dialog-copy">How much money do you want to work with each month?</p><label for="budget-input">Monthly budget (₹)</label><input id="budget-input" type="number" min="0" step="0.01" placeholder="e.g. 15000" required /><div class="dialog-actions"><button type="button" id="cancel-budget" class="secondary-button">Cancel</button><button type="submit" class="primary-button">Save budget</button></div></form></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="expense-utils.js"></script><script src="app.js"></script><script src="page-router.js"></script>
+</body>
+</html>

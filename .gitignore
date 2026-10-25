@@ -1,0 +1,27 @@
+# dependencies and build output
+node_modules/
+www/
+android/.gradle/
+android/build/
+android/app/build/
+android/capacitor-cordova-android-plugins/
+android/app/src/main/assets/public/
+android/app/src/main/assets/capacitor.config.json
+android/app/src/main/assets/capacitor.plugins.json
+*.apk
+*.aab
+*.log
+
+# local machine settings
+android/local.properties
+.idea/
+.vscode/
+
+# release signing: never commit these
+signing/
+*.jks
+*.keystore
+android/keystore.properties
+
+# files kept only for handing out builds
+share/

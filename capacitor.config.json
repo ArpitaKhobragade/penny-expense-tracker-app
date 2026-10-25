@@ -1,0 +1,14 @@
+{
+  "appId": "app.pocket.tracker",
+  "appName": "Penny",
+  "webDir": "www",
+  "backgroundColor": "#f7f8fa",
+  "android": {
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "SystemBars": {
+      "insetsHandling": "disable"
+    }
+  }
+}

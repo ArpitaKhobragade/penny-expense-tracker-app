@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The "lite" edition of Penny: no permission to read text messages, no notification access. Everything else is the same app.
+     Google Play Protect does not block an app like this when it is installed from a file, and Google Play accepts it without
+     the special SMS permission declaration. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.RECEIVE_SMS" tools:node="remove" />
+    <uses-permission android:name="android.permission.READ_SMS" tools:node="remove" />
+
+    <application>
+        <receiver android:name=".SmsReceiver" tools:node="remove" />
+        <service android:name=".UpiNotificationListener" tools:node="remove" />
+    </application>
+</manifest>

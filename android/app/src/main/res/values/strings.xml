@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Penny</string>
+    <string name="title_activity_main">Penny</string>
+    <string name="package_name">app.pocket.tracker</string>
+    <string name="custom_url_scheme">app.pocket.tracker</string>
+    <string name="widget_description">What you can spend today, from Penny</string>
+</resources>
