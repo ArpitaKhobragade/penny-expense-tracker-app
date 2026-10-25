@@ -987,13 +987,6 @@ input.switch:checked::after { transform: translateX(18px); }
 #g-plan-line:empty { display: none; }
 .own-row input { font-size: 20px; font-weight: 500; }
 
-/* ===== Lite edition: no message or notification reading ===== */
-.lite-only { display: none; }
-:root[data-lite] .lite-only { display: block; }
-:root[data-lite] #step-allow, :root[data-lite] #step-reading, :root[data-lite] #upi-card { display: none; }
-#lite-note > h2 { margin: 0 0 6px; font-size: 16px; font-weight: 500; }
-#lite-note > p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--muted); }
-
 /* ===== Monthly: where specific budgets come from, money added, and each specific budget on Home ===== */
 .spec-how { margin: 0; padding: 0; border: 0; }
 .spec-how legend { padding: 0 0 8px; font: 600 16px 'DM Sans', sans-serif; }

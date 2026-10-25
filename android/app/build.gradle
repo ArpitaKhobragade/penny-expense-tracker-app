@@ -37,20 +37,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-        // The lite edition: the release build without the permissions to read text messages and notifications
-        // (see src/lite). Same app id and same signing key, so it is the same app to Android and to Google Play.
-        lite {
-            initWith release
-            matchingFallbacks = ['release']
-            versionNameSuffix '-lite'
-        }
-        // The same lite edition for trying out on a phone next to the full app: debug-signed, its own app id and name.
-        liteTest {
-            initWith debug
-            matchingFallbacks = ['debug']
-            applicationIdSuffix '.litetest'
-            versionNameSuffix '-litetest'
-        }
     }
 }
 

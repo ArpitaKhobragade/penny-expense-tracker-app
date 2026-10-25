@@ -1817,8 +1817,6 @@
   });
 
   // ---------- Review: UPI app notifications and the notification-bar box (Android app only) ----------
-  // The lite edition cannot read messages or notifications: the page marks itself, and the steps that need them stay hidden.
-  if (Xb.available) Xb.buildInfo().then(info => { if (info && info.lite) document.documentElement.setAttribute('data-lite', ''); }).catch(() => { /* an older phone side: the full edition */ });
   let extrasStatus = { quick: null, upi: null };
   function renderUpi() {
     const { upi } = extrasStatus;

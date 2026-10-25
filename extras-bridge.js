@@ -17,8 +17,6 @@
     },
     // Opens the phone's voice typing; resolves { text } or rejects 'cancelled' / 'unavailable'.
     listenVoice: () => plugin.listenVoice(),
-    // { lite }: true in the edition that cannot read messages or notifications
-    buildInfo: () => plugin.buildInfo(),
     // { granted (notification access), enabled (the switch) }
     upiStatus: () => plugin.upiStatus(),
     upiSetEnabled: enabled => plugin.upiSetEnabled({ enabled: Boolean(enabled) }),

@@ -42,14 +42,6 @@ public class PocketExtrasPlugin extends Plugin {
         try { plugin.notifyListeners(what + "Arrived", new JSObject()); } catch (RuntimeException ignored) { /* the app drains the queue when opened */ }
     }
 
-    /** Which edition this is: the lite one cannot read text messages or notifications, so the web app hides those steps. */
-    @PluginMethod
-    public void buildInfo(PluginCall call) {
-        JSObject info = new JSObject();
-        info.put("lite", getContext().getResources().getBoolean(R.bool.penny_lite));
-        call.resolve(info);
-    }
-
     // ---- Share ----
 
     /** Opens Android's share sheet with some plain text. */
