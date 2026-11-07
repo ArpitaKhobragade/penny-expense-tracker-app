@@ -13,10 +13,10 @@ Give Penny a monthly budget (or a budget for a trip). It sets aside your bills a
 ## Demo
 
 <p align="center">
-  <a href="https://drive.google.com/drive/folders/18EQUUTKG2foeEUSQhI5ohXtUZiAkUvUq?usp=sharing"><img src="docs/screenshots/demo-poster.jpg" width="230" alt="Watch the demo videos" /></a>
+  <a href="https://drive.google.com/file/d/1JS8mFWv7YYlGVfkwA--S9wV4jS-E3-6l/view?usp=sharing"><img src="docs/screenshots/demo-poster.jpg" width="230" alt="Watch the demo video" /></a>
 </p>
 
-[Watch the demo videos](https://drive.google.com/drive/folders/18EQUUTKG2foeEUSQhI5ohXtUZiAkUvUq?usp=sharing): a walkthrough of the app as a new user, with captions.
+[Watch the demo video](https://drive.google.com/file/d/1JS8mFWv7YYlGVfkwA--S9wV4jS-E3-6l/view?usp=sharing): a walkthrough of the app as a new user, with captions.
 
 ## What it does
 
