@@ -1,6 +1,6 @@
 # Penny
 
-A private expense tracker for Android that tells you how much you can spend **today**.
+A simple, private Android app that works out how much you can safely spend **today**.
 
 Give Penny a monthly budget (or a budget for a trip). It sets aside your bills and the money going into your goals, then spreads the rest over the days that are left. Spend less today and tomorrow's limit grows; overspend and it shrinks. Everything stays on your phone. There is no account, no cloud and no internet permission.
 
