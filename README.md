@@ -2,6 +2,8 @@
 
 A private expense tracker for Android that tells you how much you can spend **today**.
 
+**Version 1.4** adds day limits: tap a day in the calendar to see what you spent, and double tap to change its limit.
+
 Give Penny a monthly budget (or a budget for a trip). It sets aside your bills and the money going into your goals, then spreads the rest over the days that are left. Spend less today and tomorrow's limit grows; overspend and it shrinks. Everything stays on your phone. There is no account, no cloud and no internet permission.
 
 <p align="center">
@@ -13,15 +15,16 @@ Give Penny a monthly budget (or a budget for a trip). It sets aside your bills a
 ## Demo
 
 <p align="center">
-  <a href="https://drive.google.com/file/d/1aFDZO4M_TnD5j6d6olmYL2Goqnn0eP3I/view?usp=sharing"><img src="docs/screenshots/demo-poster.jpg" width="230" alt="Watch the demo video" /></a>
+  <a href="https://drive.google.com/drive/folders/18EQUUTKG2foeEUSQhI5ohXtUZiAkUvUq?usp=sharing"><img src="docs/screenshots/demo-poster.jpg" width="230" alt="Watch the demo videos" /></a>
 </p>
 
-[Watch the demo video](https://drive.google.com/file/d/1aFDZO4M_TnD5j6d6olmYL2Goqnn0eP3I/view?usp=sharing): a walkthrough of the app as a new user, about 4 minutes, with captions.
+[Watch the demo videos](https://drive.google.com/drive/folders/18EQUUTKG2foeEUSQhI5ohXtUZiAkUvUq?usp=sharing): a walkthrough of the app as a new user, with captions.
 
 ## What it does
 
 - **Daily limit.** The home card shows what you can spend today, what is left of the month, and what you have spent.
 - **Add in one line.** Type `chai 20`, `auto 80 yesterday` or `movie 300 cash`. Penny finds the amount, the category and the day.
+- **Day limits.** Tap a day in the calendar to see what you spent and what is left. Double tap a day, or several days, to give them a limit of your own, and Penny shows what it does to the days after. In the budget sheet you can also add limits for particular days, and Penny tells you the budget you would need to keep your daily limit the same.
 - **Specific budgets.** Keep money apart for Food, Shopping or Travel. Choose whether it comes out of the monthly budget or stays separate.
 - **Specific period.** Plan a trip or an event with its own total, daily limit and calendar.
 - **Savings goals.** Set a target and a time, and Penny shows how much to put away each day. Add money from the goal or by typing `set aside 500 for phone`.
@@ -75,6 +78,7 @@ If Google Play Protect blocks the install, turn off "Scan apps with Play Protect
 3. Take off bills that are due and the money you put into goals.
 4. Share what is left over the days that remain, today included.
 5. Spending above a day's limit lowers the days after it, and spending less raises them.
+6. A day you gave its own limit keeps that amount, and the other days share what is left. A day that has passed keeps the limit it had.
 
 ## Build it yourself
 
@@ -112,7 +116,7 @@ python app.py                 # then open http://127.0.0.1:10000/today.html
 | Path | What it is |
 |---|---|
 | `today.html`, `today.css`, `today.js` | The screens and their drawing code |
-| `budget-math.js`, `goals.js`, `pots.js`, `cycle.js`, `bills.js`, `trash.js` | Budget, goal, bill and restore logic |
+| `budget-math.js`, `dayplan.js`, `goals.js`, `pots.js`, `cycle.js`, `bills.js`, `trash.js` | Budget, day limit, goal, bill and restore logic |
 | `sms-parser.js`, `inbox.js`, `upi.js` | Reading bank messages and UPI bills |
 | `store.js`, `backup.js`, `lock.js`, `lockui.js`, `applock.js` | Saving, backup and the app lock |
 | `tests*.js` | Unit tests (`node tests.js` runs them all) |
